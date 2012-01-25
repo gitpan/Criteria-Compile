@@ -14,7 +14,7 @@ use warnings;
 
 
 
-our $VERSION = '0.04__5';
+our $VERSION = '0.04__55';
 
 
 
@@ -103,10 +103,13 @@ sub _init {
     $self->access_mode(ACC_OBJECT);
 
     #validate any criteria supplied
-    if ($crit and !$nocomp) {
-        die('Error: Failed to compile criteria.')
-            unless ($self->add_criteria(%$crit)
-                and $self->compile());
+    if ($crit) {
+        die('Error: The supplied criteria could not be initialised')
+            unless($self->add_criteria(%$crit));
+        if (!$nocomp) {
+            die('Error: Failed to compile criteria.')
+                unless ($self->compile());
+        }
     }
     return 1;
 }
