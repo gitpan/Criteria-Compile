@@ -11,10 +11,11 @@ package Criteria::Compile;
 
 use strict;
 use warnings;
+no warnings 'uninitialized';
 
 
 
-our $VERSION = '0.04__61';
+our $VERSION = '0.04__7';
 
 
 
@@ -121,7 +122,7 @@ sub _define_grammar_dtbl {
     foreach my $token (keys(%$dtbl)) {
         my $map = $dtbl->{$token};
         foreach (keys(%$map)) {
-            $self->define_grammar(qr/$_/, $map->{$_}, $token);
+            $self->define_grammar($_, $map->{$_}, $token);
         }
     }
     return 1;
@@ -343,10 +344,8 @@ sub _gen_like_sub {
     my $getter = $context->{getter};
     #create single multi-action execution sub
     return sub {
-        return (ref($_[0])
-            and (local $_ = $getter->($_[0], $attr)))
-            ? m/$val/
-            : 0;
+        local $_ = $getter->($_[0], $attr);
+        return m/$val/ ? 1 : 0;
     };
 }
 
